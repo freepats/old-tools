@@ -1,0 +1,49 @@
+Intro
+=====
+The parsetxt library is my brute-force configuration file library.
+At the moment it is read-only.
+My email address is collver@peak.org.
+
+Brief explanation of configuration file format
+==============================================
+The file is strictly line-based and there are no line continuations.
+Blank lines and comments are ignored.
+Comments are lines that begin with the character ';' or '#'.
+Each configuration line has a key and a value.
+Each key must be unique, no duplicates allowed.
+From the beginning of the line to a '=' character is the key.
+From the '=' character to the end of the line is the value.
+A key may not contain a '=' character.
+
+Brief explanation of library usage
+==================================
+Create a variable to hold the structure.
+txt_t *txt;
+
+Initialize the variable.
+txt = txt_new();
+
+To read a configuration file, open it with fopen.  Pass the file handle.
+  FILE *ifp;
+  char txtfile[] = "bens.conf";
+  ifp = fopen(txtfile, "r");
+  txt->read_lines(txt, ifp);
+
+To see if a key exists.
+  int n;
+  char key[] = "keyname";
+  if (txt->find_key(txt, key) == -1) puts("key does not exist");
+
+To get the value of a key.
+  char *value;
+  value = txt->get_data(txt, key);
+  /* get_data returns a pointer to internal data which will be lost
+     once the txt structure is destroyed. */
+
+History
+=======
+version 1
+- split off from sfubar utility
+
+version 2
+- added feature to track last line looked up

@@ -1,0 +1,8 @@
+RIFF.fmt.wFormatTag=1
+RIFF.fmt.wChannels=1
+RIFF.fmt.dwSamplesPerSec=44100
+RIFF.fmt.dwAvgBytesPerSec=88200
+RIFF.fmt.wBlockAlign=2
+RIFF.fmt.wBitsPerSample=16
+RIFF.data.size=4410
+RIFF.data.file=tmp/wav.raw

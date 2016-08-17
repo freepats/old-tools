@@ -1,0 +1,207 @@
+<html>
+<head><title>pysf - Python SoundFont utility</title></head>
+<body>
+<h2>Intro</h2>
+<p>
+The pysf utility is a way to create and edit SoundFont 2 files
+at the command line.  It does this using XML configuration
+files and basic audio files (strict sub-set of .wav and .aif).
+</p>
+<p>
+Each SoundFont2 file has one or more presets, each preset
+containing one or more preset zones, each preset zone mapping
+to an instrument, each instrument containing one or more
+instrument zones, each instrument zone mapping to a wavetable.
+</p>
+<p>
+The pysf utility is released into the public domain.  For
+countries without a public domain, pysf is released under
+the <a href="http://sam.zoy.org/wtfpl/">WTF</a> public license.
+</p>
+<p>
+My email address is collver@peak.org
+</p>
+<ul>
+Many terms will be defined in the SoundFont 2 Standard.
+<li><a href="http://freepats.opensrc.org/sf2/sfspec24.pdf">
+  http://freepats.opensrc.org/sf2/sfspec24.pdf
+  </a></li>
+</ul>
+<ul>
+MPEG4-SA is more free, and includes much of the same information.
+<li><a href="http://sound.media.mit.edu/mpeg4/">
+  http://sound.media.mit.edu/mpeg4/
+  </a></li>
+</ul>
+<ul>
+The SoundFont 2 standard refers to the MIDI standard.
+<li><a href="http://www.ibiblio.org/emusic-l/info-docs-FAQs/MIDI-doc/">
+  http://www.ibiblio.org/emusic-l/info-docs-FAQs/MIDI-doc/
+  </a></li>
+<li><a href="http://www.borg.com/~jglatt/tech/midispec.htm">
+  http://www.borg.com/~jglatt/tech/midispec.htm
+  </a></li>
+</ul>
+<h2>Usage and Examples</h2>
+<p>
+<pre>
+Usage: pysf.py [conversion] [infile] [outfile]
+    conversion := --sf2xml | --xml2sf
+    conversion := --aif2xml | --xml2aif
+    conversion := --wav2xml | --xml2wav
+</pre>
+</p>
+<p>
+<pre>pysf.py --sf2xml old.sf2 conf.xml</pre>
+Create conf.xml based on old.sf2.  Will also create conf%d.wav for
+included audio samples
+</p>
+<p>
+<pre>pysf.py --xml2sf conf.xml new.sf2</pre>
+Create new.sf2 based on conf.xml
+</p>
+<p>
+<pre>xmllint --noout --schema pysf.xsd conf.xml</pre>
+Validate conf.xml using xmllint utility from libxml.
+</p>
+<h2>Brief explaination of configuration tags</h2>
+<p>
+<table border=1>
+  <tr><th>tag</th><th>description</th></tr>
+  <tr><td>ISNG</td><td>mandatory, optimal target sound engine</td></tr>
+  <tr><td>INAM</td><td>mandatory, name of sound bank</td></tr>
+  <tr><td>ICRD</td><td>file creation date</td></tr>
+  <tr><td>IPRD</td><td>target product</td></tr>
+  <tr><td>ISFT</td><td>software used to create/modify the file</td></tr>
+  <tr><td>IFIL</td><td>contains major and minor version of spec.</td></tr>
+  <tr><td>major</td><td>Major version of soundfont specfication used.</td></tr>
+  <tr><td>minor</td><td>Minor version of soundfont specfication used.</td></tr>
+  <tr><td>instruments</td><td>mandatory, instrument list</td></tr>
+  <tr><td>instrument</td><td>mandatory, instrument section</td></tr>
+  <tr><td>presets</td><td>mandatory, preset list</td></tr>
+  <tr><td>preset</td><td>mandatory, preset section</td></tr>
+  <tr><td>wavetables</td><td>mandatory, wavetable list</td></tr>
+  <tr><td>wavetable</td><td>mandatory, wavetable section</td></tr>
+  <tr><td>zones</td><td>mandatory, zone list for instrument or preset
+    section</td></tr>
+  <tr><td>zone</td><td>mandatory, zone section</td></tr>
+  <tr><td>id</td><td>mandatory, id for instrument or wavetable,
+    referenced by other sections</td></tr>
+  <tr><td>name</td><td>mandatory, descriptive name for instrument,
+    preset, or wavetable</td></tr>
+  <tr><td>keyRange</td><td>range of MIDI notes for zone</td></tr>
+  <tr><td>velRange</td><td>range of MIDI velocities for zone</td></tr>
+  <tr><td>overridingRootKey</td><td>base MIDI note for zone</td></tr>
+  <tr><td>wavetableId</td><td>wavetable used by instrument zone</td></tr>
+  <tr><td>instrumentId</td><td>instrument used by preset zone</td></tr>
+  <tr><td>delayVolEnv</td><td>time in seconds for delay section of
+    volume envelope</td></tr>
+  <tr><td>attackVolEnv</td><td>time in seconds for attack section of
+    volume envelope</td></tr>
+  <tr><td>holdVolEnv</td><td>time in seconds for hold section of volume
+    envelope</td></tr>
+  <tr><td>decayVolEnv</td><td>time in seconds for decay section of
+    volume envelope</td></tr>
+  <tr><td>releaseVolEnv</td><td>time in seconds for release section of
+    volume envelope</td></tr>
+  <tr><td>sustainVolEnv</td><td>volume decrease in centibels for decay
+    section</td></tr>
+  <tr><td>keynumToVolEnvHold</td><td>degree, in timecents per KeyNumber
+    units, to which the hold time is degreased.  The value of KeyNumber
+    units is found by the difference between the MIDI note number and 60.
+  <tr><td>exclusiveClass</td><td>new notes will silence currently
+    playing notes if the instruments are in the same exclusiveClass</td></tr>
+  <tr><td>gens</td><td>generic generator operator list in zone</td></tr>
+  <tr><td>gen</td><td>generic generator operator</td></tr>
+  <tr><td>comment</td><td>comment describing generator, not used by
+    pysf</td></tr>
+  <tr><td>hexAmount</td><td>hexadecimal unsigned word argument</td></tr>
+  <tr><td>oper</td><td>decimal generator operator number</td></tr>
+  <tr><td>file</td><td>mandatory, name of aif or wav file used by
+    wavetable</td></tr>
+  <tr><td>loop</td><td>loop begin and end point for wavetable</td></tr>
+  <tr><td>pitch</td><td>MIDI note that the wavetable was recorded at</td></tr>
+  <tr><td>pitchcorr</td><td>pitch correction in cents for wavetable</td></tr>
+  <tr><td>channel</td><td>select channel for instrument and/or from
+    stereo audio file</td></tr>
+  <tr><td>link</td><td>link to other wavetable in a stereo instrument</td></tr>
+</table>
+</p>
+<h2>24-bit sample width wavetables</h2>
+<p>
+To use 24-bit sample width wavetables, you must set ifil to major 2, minor 4.
+If you use 24-bit wavetables, then all wavetables used must be 24-bit.
+You can use audacity to convert between 24-bit and other sample widths.
+</p>
+<p>
+Theoretically, old software should be able to play 24-bit soundfonts
+at lower quality by simply ignoring the sm24 chunk.  However, some programs
+will refuse to use 24-bit soundfonts.  Timidity and fluidsynth do not
+support 24-bit soundfonts, and apparently neither does quicktime.
+Therefore, this feature is not well tested in pysf.
+</p>
+<h2>Stereo wavetables</h2>
+<p>
+To use a stereo .wav file for a mono wavetable, use the channel tag to
+select a channel.  If the wavetable is linked, then the channel tag also
+determines whether the wavetable is the left or the right channel in a
+stereo instrument.  A stereo instrument requires two linked wavetables.
+Use link tags to link wavetables.  Example:
+<pre>
+&lt;wavetable&gt;
+  &lt;channel&gt;right&lt;/channel&gt;
+  &lt;id&gt;1&lt;/id&gt;
+  &lt;file&gt;stereo.wav&lt;/file&gt;
+  &lt;link&gt;2&lt;/link&gt;
+&lt;/wavetable&gt;
+&lt;wavetable&gt;
+  &lt;channel&gt;left&lt;/channel&gt;
+  &lt;id&gt;2&lt;/id&gt;
+  &lt;file&gt;stereo.wav&lt;/file&gt;
+  &lt;link&gt;1&lt;/link&gt;
+&lt;/wavetable&gt; 
+</pre>
+</p>
+<p>
+A stereo instrument also requires a zone for each channel.  Example:
+<pre>
+&lt;instrument&gt;
+  &lt;zones&gt;
+    &lt;zone&gt;
+      &lt;keyRange&gt;&lt;begin&gt;12&lt;/begin&gt;&lt;end&gt;127&lt;/end&gt;&lt;/keyRange&gt;
+      &lt;wavetableId&gt;1&lt;/wavetableId&gt;
+    &lt;/zone&gt;
+    &lt;zone&gt;
+      &lt;keyRange&gt;&lt;begin&gt;12&lt;/begin&gt;&lt;end&gt;127&lt;/end&gt;&lt;/keyRange&gt;
+      &lt;wavetableId&gt;2&lt;/wavetableId&gt;
+    &lt;/zone&gt;
+  &lt;/zones&gt;
+&lt;/instrument&gt;
+</pre>
+</p>
+<h2>History</h2>
+<p>
+<ul>
+<li><ul>Version 1, 2007-Mar-4
+  <li>added support for stereo wavetables</li>
+  <li>tested on Python 2.3.5 and Python 2.4.4</li>
+</ul></li>
+<li><ul>Version 2, 2007-Mar-10
+  <li>added IFIL configuration tag. for specifying soundfont 2.04</li>
+  <li>added support for 24-bit sample width</li>
+  <li>added version attribute to XML schema and output files</li>
+  <li>tested on Python 2.5</li>
+  <li>tested on big-endian system</li>
+  <li>using md5 instead of zlib.adler32 for portability reasons.
+      http://sourceforge.net/tracker/?func=detail&atid=105470&aid=1678102&group_id=5470</li>
+</ul></li>
+</ul>
+</p>
+<h2>TODO</h2>
+<p>
+<ul>
+<li>add a gui front-end</li>
+</ul>
+</p>
+</body>
+</html>

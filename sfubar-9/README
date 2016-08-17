@@ -1,0 +1,279 @@
+Intro
+Usage and Examples
+Build Instructions
+Brief explanation of configuration file format
+History
+
+Intro
+=====
+The sfubar utility is a way to create and edit SoundFont 2 files at the
+command line.  It does this using plain text configuration files and
+basic audio files (strict sub-set of .wav, .aif, .raw).  It can also be
+used to edit meta-data in .wav and .aif files.
+
+This is part of my project to convert my old Impulse Tracker modules to
+csound.  The tool only supports a subset of the SoundFont 2 standard.
+This is released in the public domain.
+
+Each SoundFont2 file has one of more presets, each composed of one or
+more zones which map to instruments.  Each instrument is composed of
+one or more zones which map to wavetables.
+
+My email address is collver@peak.org.
+
+Many terms will be defined in the SoundFont 2 standard.
+  http://soundblaster.com/soundfont/sfspec21.pdf
+
+MPEG4-SA is more free, and includes much of the same information.
+  http://sound.media.mit.edu/mpeg4/
+
+The SoundFont 2 standard refers to the MIDI standard.
+  http://www.ibiblio.org/emusic-l/info-docs-FAQs/MIDI-doc/
+  http://www.borg.com/~jglatt/tech/midispec.htm
+
+The WAV, AIFF, and AIFC formats are documented here:
+  http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html
+  http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/AIFF/AIFF.html
+
+Both SoundFont 2 and Impulse Tracker refer to a sample as a table of
+recorded data used to generate a sound.  For example, a .wav file with
+16-bit audio is a table of 16-bit numbers.  Common usage of the term
+sample refers to the individual numbers that make up the table.  In my
+opinion, this can cause confusion.  From here on, I will refer to the
+individual numbers as samples, and the whole table as a wavetable.
+
+MIDI notes have numbers from 0 to 127, with 60 being C-5.
+
+Build Instructions
+==================
+see libriffraff*/README
+
+Note that GNU Make cannot handle spaces in paths for targets and
+dependencies.  Therefore on Windows, you must be careful not to
+build under such a path.  see http://savannah.gnu.org/bugs/?712
+
+make
+
+Usage and Examples
+==================
+Usage: sfubar [conversion] [infile] [outfile]
+        conversion := --sf2txt | --txt2sf | --sfdebug
+
+sfubar --sf2txt old.sf2 sf_conf.txt
+  Create sf_conf.txt based on old.sf2
+  Will also create sf_conf%d.wav for included audio samples
+
+sfubar --txt2sf sf_conf.txt new.sf2
+  Create new.sf2 based on configuration in sf_conf.txt
+
+sfubar --sfdebug new.sf2 - | more
+  Print debugging information about new.sf2 and pipe to pager.
+
+Brief explanation of configuration file format
+==============================================
+For technical specifics, see libparsetxt-*/README.
+
+RIFF.LIST.isng.zstr=EMU8000
+Sound engine that the file is optimized for.
+Mandatory line.
+
+RIFF.LIST.INAM.zstr=sfubar instruments
+Name of the sound bank.
+Mandatory line.
+
+RIFF.LIST.ICRD.zstr=Nov 08, 2005
+Date the file was created.
+
+RIFF.LIST.IPRD.zstr=SBAWE32
+Product that the file is intended for.
+
+RIFF.LIST.ISFT.zstr=Compressed ImpulseTracker 2.14:mod2cs-0.2
+Tools used to create and modify the file.
+
+SF2.wt.1.wav=test1.wav
+SF2.wt.1.aif=test1.aif
+File name for the first wavetable.
+Mandatory for each wavetable.
+Key name depends on file format.
+The files must be 16-bit, monoaural, uncompressed audio.
+The sample rate must be integral and between 400 and 50000 hertz.
+Will read loop points, pitch, and pitch correction from aif files.
+
+SF2.wt.1.name=piano
+Descriptive name for the first wavetable.
+
+SF2.wt.1.loopstart=10
+Starting sample for looping in the first wavetable.
+Overrides settings read from wavetable file.
+
+SF2.wt.1.loopstop=164584
+Ending sample for looping in the first wavetable.
+Overrides settings read from wavetable file.
+
+SF2.wt.1.pitch=60
+MIDI note that the wavetable was recorded at.
+Overrides settings read from wavetable file.
+
+SF2.wt.1.pitchcorr=0
+Pitch correction in cents.
+Overrides settings read from wavetable file.
+
+SF2.in.1.name=piano instrument
+Descriptive name for the first instrument
+
+SF2.in.1.zone.1.wt=1
+Wavetable used by the first zone of the first instrument.
+Each instrument must have at least 1 zone.
+
+SF2.in.1.zone.1.keyRange=12,127
+Range of MIDI notes for the first zone of the first instrument.
+
+SF2.in.1.zone.1.velRange=0,127
+Range of MIDI velocities for the first zone of the first instrument.
+
+SF2.in.1.zone.1.delayVolEnv=0
+SF2.in.1.zone.1.attackVolEnv=0.25
+SF2.in.1.zone.1.holdVolEnv=1
+SF2.in.1.zone.1.decayVolEnv=1
+SF2.in.1.zone.1.releaseVolEnv=1
+Time in seconds for delay, attack, hold, and decay sections of volume
+envelope.
+
+SF2.in.1.zone.1.sustainVolEnv=0
+Volume decrease in centibels for the decay section.
+
+SF2.in.1.zone.1.keynumToVolEnvHold=0
+Degree, in timecents per KeyNumber units, to which the hold time is
+decreased.  The value of KeyNumber units is found by the difference
+between the note's MIDI key number and 60.
+
+SF2.in.1.zone.1.keynumToVolEnvDecay=0
+Degree, in timecents per KeyNumber units, to which the decay time is
+decreased.  The value of KeyNumber units is found by the difference
+between the note's MIDI key number and 60.
+
+SF2.in.1.zone.1.overridingRootKey=77
+Base MIDI note for the first section of the first instrument.
+If a wavetable is recorded at C-5, and the basenote is set to 77,
+then the instrument will play C-5 at MIDI note 77.
+
+SF2.in.1.zone.1.exclusiveClass=1
+New notes will silence currently playing notes if the instruments are in
+the same exclusiveClass.
+
+SF2.ps.1.name=Piano preset
+Descriptive name for the first preset
+
+SF2.ps.1.bank=40
+Bank for the first preset
+
+SF2.ps.1.zone.1.in=1
+Instrument used by the first zone of the first preset.
+Each preset must have at least 1 zone.
+
+SF2.ps.1.zone.1.keyRange=12,127
+Range of MIDI notes for the first zone of the first preset.
+
+SF2.ps.1.zone.1.velRange=0,127
+Range of MIDI velocities for the first zone of the first preset.
+
+SF2.ps.1.zone.1.delayVolEnv=0
+SF2.ps.1.zone.1.attackVolEnv=0.25
+SF2.ps.1.zone.1.holdVolEnv=1
+SF2.ps.1.zone.1.decayVolEnv=1
+SF2.ps.1.zone.1.releaseVolEnv=1
+Time in seconds for delay, attack, hold, and decay sections of volume
+envelope.
+
+SF2.ps.1.zone.1.sustainVolEnv=0
+Volume decrease in centibels for the decay section.
+
+SF2.ps.1.zone.1.keynumToVolEnvHold=0
+Degree, in timecents per KeyNumber units, to which the hold time is
+decreased.  The value of KeyNumber units is found by the difference
+between the note's MIDI key number and 60.
+
+SF2.ps.1.zone.1.keynumToVolEnvDecay=0
+Degree, in timecents per KeyNumber units, to which the decay time is
+decreased.  The value of KeyNumber units is found by the difference
+between the note's MIDI key number and 60.
+
+History
+=======
+2006-04-16 version 1
+- initial release
+
+2006-04-20 version 2
+- split off libparsetxt and libriffraff components
+- add --wavdebug --wav2txt and --txt2wav commands
+- the motivation for --txt2wav was to gain the ability to add the
+  sampler chunk to a wav file.  Then I found csound only supports
+  reading loop points from aifc files.  so I did not finish it.
+
+2006-05-08 version 3
+- change soundfont2 loop type from continuous to sustain & continue
+- change wavetable configuration key to include file format
+- add support for aiff and aifc files to libriffraff
+- add support for reading sampler settings from aif files when
+  creating soundfont files.
+- add gensine utility, used to replace sox in test script
+- add configuration key "byteswap" for adjusting raw samples
+
+2006-07-09 version 4
+- remove support for reading sampler settings from aif files when
+  creating soundfont files.  It was only writing the settings in
+  the sample chunks, and omitted writing loop info in hydra.  Loop
+  settings must be set in the --txt2sf text input file.
+- add a few files to clean make target
+- add trap.c to replace exit(), which should make this more
+  friendly as a library
+- disable csound test, because it varies when I don't expect it
+- make first pass at library, libsfubar-4.a and sfubar.h
+
+2006-07-16 version 5
+- change range to keyRange
+- move some soundfont-specific structures from rifftypes.h to sfutil.h
+- move some constants from sfutil.c to sfutil.h and changed to enums
+- add generators: velRange, delayVolEnv, attackVolEnv,
+  holdVolEnv, decayVolEnv, sustainVolEnv, releaseVolEnv,
+  keynumToVolEnvHold, keynumToVolEnvDecay
+- new generators minimally tested, please report any bugs!
+
+2006-07-29 version 6
+- rename map to zone
+- rename basenote to overridingRootKey
+- remove backward compatibility word "range"
+- add support for preset zones
+- remove 1:1 relationship for preset and instrument zones
+- make overridingRootKey optional instead of required
+- since the beginning, sfubar would incorrectly index "maps" when
+  converting from soundfont2 to text.  I did not catch this because my
+  test case only had a single mapping, and I generally convert from text
+  to soundfont2, not the other way around.  Fixed bug and added test case.
+- specify sample type in error message about unsupported types
+- fix arithmetic bug when converting volume envelopes to text
+- add exclusiveClass generator
+
+2006-08-07 version 7
+- fix test.sh to match configuration format changes
+- fix makefiles to work with GNU make
+
+2006-11-13 version 8
+- remove -static link flag to accomodate broken compiler shipped with
+  Mac OS X Tiger.
+- make CFLAGS cascade from parent Makefile
+- fix ascii/binary file mode issues in Cygwin
+- fix regression, the assumption that malloc() clears the memory allocated
+
+2007-02-16 version 9
+- fix sampleModes bug which has been present since sfubar version 1.
+  sfubar sets the value for sampleModes depending on the loop points of
+  the wavetable in the instrument zone.  However, sfubar indexed the
+  wavetable by the instrument number instead of the wavetable number.
+  Reported by Pete @ Berkeley
+- do not include sampleModes in preset zones
+- fix signed vs unsigned issue in libriffraff
+- added missing make rule for ieee80.o in libriffraff
+- skip ieee80 conversion test on Windows 95, because of buggy printf format
+- rename generator enumators to include magic numbers
+  because there are so many, it helps to keep track

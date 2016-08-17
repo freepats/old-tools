@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://terrorpin.net/~ben/docs/alt/music/soundfont/pysf"
+  xmlns:pysf="http://terrorpin.net/~ben/docs/alt/music/soundfont/pysf"
+  elementFormDefault="unqualified" attributeFormDefault="unqualified"
+  version="2">
+
+<!-- begin soundfont section -->
+<xs:complexType name="genType"><xs:all>
+  <xs:element name="comment" minOccurs="0" type="xs:string"/>
+  <xs:element name="hexAmount" type="xs:string"/>
+  <xs:element name="oper" type="xs:decimal"/>
+</xs:all></xs:complexType>
+
+<xs:complexType name="rangeType"><xs:all>
+  <xs:element name="begin" type="xs:integer"/>
+  <xs:element name="end" type="xs:integer"/>
+</xs:all></xs:complexType>
+
+<xs:complexType name="wavetableType"><xs:all>
+  <xs:element name="id" type="xs:integer"/>
+  <xs:element name="file" type="xs:string"/>
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="loop" type="pysf:rangeType" minOccurs="0"/>
+  <xs:element name="pitch" type="xs:integer" minOccurs="0"/>
+  <xs:element name="pitchcorr" type="xs:integer" minOccurs="0"/>
+  <xs:element name="channel" type="xs:string" minOccurs="0"/>
+  <xs:element name="link" type="xs:integer" minOccurs="0"/>
+</xs:all></xs:complexType>
+
+<xs:complexType name="instrumentType"><xs:all>
+  <xs:element name="id" type="xs:integer"/>
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="zones"><xs:complexType><xs:sequence>
+    <xs:element name="zone" maxOccurs="unbounded"><xs:complexType><xs:all>
+      <!-- instrument zone elements -->
+      <xs:element name="wavetableId" type="xs:string"/>
+      <xs:element name="loop" type="pysf:rangeType" minOccurs="0"/>
+
+      <!-- generic zone elements -->
+      <xs:element name="keyRange" type="pysf:rangeType" minOccurs="0"/>
+      <xs:element name="velRange" type="pysf:rangeType" minOccurs="0"/>
+      <xs:element name="overridingRootKey" type="xs:integer" minOccurs="0"/>
+      <xs:element name="exclusiveClass" type="xs:integer" minOccurs="0"/>
+      <xs:element name="delayVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="attackVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="holdVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="decayVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="releaseVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="sustainVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="keynumToVolEnvHold" type="xs:integer" minOccurs="0"/>
+      <xs:element name="keynumToVolEnvDecay" type="xs:integer" minOccurs="0"/>
+      <xs:element name="gens" minOccurs="0"><xs:complexType><xs:sequence>
+        <xs:element name="gen" type="pysf:genType" maxOccurs="unbounded"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:all></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:all></xs:complexType>
+
+<xs:complexType name="presetType"><xs:all>
+  <xs:element name="id" type="xs:integer"/>
+  <xs:element name="bank" type="xs:integer"/>
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="zones"><xs:complexType><xs:sequence>
+    <xs:element name="zone" maxOccurs="unbounded"><xs:complexType><xs:all>
+      <!-- preset zone elements -->
+      <xs:element name="instrumentId" type="xs:string"/>
+
+      <!-- generic zone elements -->
+      <xs:element name="keyRange" type="pysf:rangeType" minOccurs="0"/>
+      <xs:element name="velRange" type="pysf:rangeType" minOccurs="0"/>
+      <xs:element name="overridingRootKey" type="xs:integer" minOccurs="0"/>
+      <xs:element name="exclusiveClass" type="xs:integer" minOccurs="0"/>
+      <xs:element name="delayVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="attackVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="holdVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="decayVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="releaseVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="sustainVolEnv" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="keynumToVolEnvHold" type="xs:integer" minOccurs="0"/>
+      <xs:element name="keynumToVolEnvDecay" type="xs:integer" minOccurs="0"/>
+      <xs:element name="gens" minOccurs="0"><xs:complexType><xs:sequence>
+        <xs:element name="gen" type="pysf:genType" maxOccurs="unbounded"/>
+      </xs:sequence></xs:complexType></xs:element>
+    </xs:all></xs:complexType></xs:element>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:all></xs:complexType>
+
+<xs:complexType name="sf2Type"><xs:all>
+  <xs:element name="ISNG" type="xs:string"/>
+  <xs:element name="INAM" type="xs:string"/>
+  <xs:element name="ICRD" type="xs:string"/>
+  <xs:element name="IPRD" type="xs:string"/>
+  <xs:element name="ISFT" type="xs:string"/>
+  <xs:element name="IFIL" minOccurs="0"><xs:complexType><xs:sequence>
+    <xs:element name="major" type="xs:integer"/>
+    <xs:element name="minor" type="xs:integer"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="wavetables"><xs:complexType><xs:sequence>
+    <xs:element name="wavetable" type="pysf:wavetableType"
+      maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="instruments"><xs:complexType><xs:sequence>
+    <xs:element name="instrument" type="pysf:instrumentType"
+      maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+  <xs:element name="presets"><xs:complexType><xs:sequence>
+    <xs:element name="preset" type="pysf:presetType" maxOccurs="unbounded"/>
+  </xs:sequence></xs:complexType></xs:element>
+</xs:all></xs:complexType>
+<!-- end soundfont section -->
+
+<!-- begin audio file section -->
+<xs:complexType name="audType"><xs:all>
+  <xs:element name="channels" type="xs:integer"/>
+  <xs:element name="sampleRate" type="xs:integer"/>
+  <xs:element name="sampleSize" type="xs:integer"/>
+  <xs:element name="file" type="xs:string"/>
+  <xs:element name="byteswap" type="xs:integer" minOccurs="0"/>
+</xs:all></xs:complexType>
+<!-- end audio file section -->
+
+<xs:complexType name="pysfType">
+  <xs:choice>
+    <xs:element name="sf2" type="pysf:sf2Type"/>
+    <xs:element name="wav" type="pysf:audType"/>
+    <xs:element name="aif" type="pysf:audType"/>
+  </xs:choice>
+  <xs:attribute name="version" type="xs:string"/>
+</xs:complexType>
+
+<xs:element name="pysf" type="pysf:pysfType"/>
+
+</xs:schema>

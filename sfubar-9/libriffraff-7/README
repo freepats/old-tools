@@ -1,0 +1,16 @@
+Intro
+Build Instructions
+
+Intro
+=====
+The riffraff library is my brute-force riff library.
+It depends on the math library.
+At the moment it is read-only.
+My email address is collver@peak.org.
+
+I will document it at a later date.
+
+Build Instructions
+==================
+If you are building on a big-endian machine that is not running NetBSD,
+then change MY_BYTE_ORDER in bits.h
